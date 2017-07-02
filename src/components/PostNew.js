@@ -4,7 +4,9 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 
-import {changePostTitle, changePostBody, createPost} from '../actions';
+import {changePostTitle, changePostBody, createPost, resetPostForm} from '../actions';
+
+import PostForm from './PostForm';
 
 class Postnew extends Component {
     constructor(props) {
@@ -13,6 +15,9 @@ class Postnew extends Component {
         this.onBodyChange = this.onBodyChange.bind(this);
         this.onOkPress = this.onOkPress.bind(this);
         this.onCancelPress = this.onCancelPress.bind(this);
+    }
+    componentWillUnmount() {
+        this.props.resetPostForm();
     }
     onTitleChange(title) {
         this.props.changePostTitle(title);
@@ -34,52 +39,19 @@ class Postnew extends Component {
 
         return (
             <View>
-                <Text style={styles.textLabel}>Title</Text>
-                <TextInput value={title}
-                    style={styles.textInput}
-                    onChangeText={this.onTitleChange}
+                <Text>New post</Text>
+                <PostForm
+                    onTitleChange={this.onTitleChange}
+                    onBodyChange={this.onBodyChange}
+                    onOkPress={this.onOkPress}
+                    onCancelPress={this.onCancelPress}
+                    title={title}
+                    body={body}
                 />
-
-                <Text style={styles.textLabel}>Content</Text>
-                <TextInput value={body}
-                    style={styles.textInput}
-                    onChangeText={this.onBodyChange}
-                />
-
-                <TouchableOpacity 
-                    style={styles.btn}
-                    onPress={this.onCancelPress}
-                >
-                    <Text>Cancel</Text>
-                </TouchableOpacity>
-                <TouchableOpacity 
-                    style={styles.btn}
-                    onPress={this.onOkPress}
-                >
-                    <Text>OK</Text>
-                </TouchableOpacity>
             </View>
         );
     }
 }
-
-const styles = StyleSheet.create({
-    textLabel: {
-        fontWeight: 'bold'
-    },
-    textInput: {
-        height: 80
-    },
-    btn: {
-        borderWidth: 1,
-        padding: 6,
-        backgroundColor: 'antiquewhite',
-        width: '50%',
-        display: 'flex',
-        justifyContent: 'center'
-
-    }
-});
 
 const mapStateToProps = (state) => {
     const {title, body} = state.postForm;
@@ -90,7 +62,8 @@ const mapDispatchToProps = (dispatch) => {
     return bindActionCreators({
         changePostTitle,
         changePostBody,
-        createPost
+        createPost,
+        resetPostForm
     }, dispatch);
 };
 

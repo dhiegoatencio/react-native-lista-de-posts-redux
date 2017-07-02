@@ -11,6 +11,8 @@ export default (state = INITIAL_STATE, action) => {
             return {...state, body: action.body};
         case 'CREATE_POST':
             return INITIAL_STATE;
+        case 'RESET_POST_FORM':
+            return INITIAL_STATE;
         default:
             return state;
     }

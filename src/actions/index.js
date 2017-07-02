@@ -44,3 +44,7 @@ export const createPost = (post) => {
         payload: request
     };
 };
+
+export const resetPostForm = () => ({
+    type: 'RESET_POST_FORM'
+});
