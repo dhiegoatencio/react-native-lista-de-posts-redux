@@ -1,11 +1,11 @@
 import React, {Component} from 'react';
-import {View, Text} from 'react-native';
+import {View, Text, TouchableOpacity, StyleSheet} from 'react-native';
 import {connect} from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { Actions } from 'react-native-router-flux';
 
 import PostForm from './PostForm';
-import {changePostTitle, changePostBody, resetPostForm} from '../actions';
+import {changePostTitle, changePostBody, resetPostForm, updatePost, deletePost} from '../actions';
 
 class PostEdit extends Component {
     constructor(props) {
@@ -14,6 +14,7 @@ class PostEdit extends Component {
         this.onBodyChange = this.onBodyChange.bind(this);
         this.onOkPress = this.onOkPress.bind(this);
         this.onCancelPress = this.onCancelPress.bind(this);
+        this.onDeletePress = this.onDeletePress.bind(this);
     }
     componentDidMount() {
         const {title, body} = this.props.selectedPost;
@@ -24,10 +25,20 @@ class PostEdit extends Component {
         this.props.resetPostForm();
     }
     onOkPress() {
-
+        const {title, body, selectedPost} = this.props;
+        this.props.updatePost({
+            title,
+            body,
+            id: selectedPost.id,
+        });
+        Actions.pop();
     }
     onCancelPress() {
         Actions.pop();
+    }
+    onDeletePress() {
+        this.props.deletePost(this.props.selectedPost.id);
+        Actions.list({type: 'reset'});
     }
     onTitleChange(title) {
         this.props.changePostTitle(title);
@@ -47,10 +58,29 @@ class PostEdit extends Component {
                     title={title}
                     body={body}
                 />
+
+                <TouchableOpacity style={styles.btn}
+                    onPress={this.onDeletePress}
+                >
+                    <Text>Delete</Text>
+                </TouchableOpacity>
             </View>
         );
     }
 }
+
+
+const styles = StyleSheet.create({
+    btn: {
+        borderWidth: 1,
+        padding: 6,
+        backgroundColor: 'red',
+        width: '50%',
+        display: 'flex',
+        justifyContent: 'center'
+
+    }
+});
 
 const mapStateToProps = state => {
     return {
@@ -59,17 +89,12 @@ const mapStateToProps = state => {
         body: state.postForm.body
     };
 };
-/*
-const mapDispatchToProps = (dispatch) => {
-    return bindActionCreators({
-        changePostTitle,
-        changePostBody
-    }, dispatch);
-};*/
 const mapDispatchToProps = {
     changePostBody,
     changePostTitle,
-    resetPostForm
+    resetPostForm,
+    updatePost,
+    deletePost
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PostEdit);

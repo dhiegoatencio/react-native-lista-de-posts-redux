@@ -15,6 +15,19 @@ export default (state = INITIAL_STATE, action) => {
             const all = [...state.all, action.payload.data];
             return {...state, all};
         }
+        case 'UPDATE_POST': {
+            const selected = action.payload.data;
+            const all = state.all.map(post => {
+                return post.id === selected.id ? selected : post;
+            });
+            return {...state, selected, all};
+        }
+        case 'DELETE_POST': {
+            const all = state.all.filter(post => {
+                return state.selected.id !== post.id;
+            });
+            return {...state, selected: null}, all;
+        }
         default:
             return state;
     }
